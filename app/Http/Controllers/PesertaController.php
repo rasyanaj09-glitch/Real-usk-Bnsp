@@ -75,8 +75,6 @@ class PesertaController extends Controller
         'email' => $request->email,
     ]);
 
-    dd($peserta->fresh());
-
     return redirect()->route('peserta.index')
         ->with('success', 'Data peserta berhasil diperbarui.');
 }

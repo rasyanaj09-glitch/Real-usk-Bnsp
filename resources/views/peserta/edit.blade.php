@@ -1,4 +1,3 @@
-```blade
 <!DOCTYPE html>
 <html lang="id">
 
@@ -245,6 +244,22 @@
 
                     </div>
 
+                    <div class="form-group">
+                        <label for="alamat" class="form-label">Alamat</label>
+                        <textarea
+                            name="alamat"
+                            id="alamat"
+                            class="form-control @error('alamat') is-invalid @enderror"
+                            rows="3"
+                            required>{{ old('alamat', $peserta->alamat) }}</textarea>
+
+                        @error('alamat')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                        @enderror
+                    </div>
+
 
                     <!-- Dropdown Pilihan Skema Sertifikasi -->
                     <div class="form-group">
@@ -372,4 +387,3 @@
 </body>
 
 </html>
-```

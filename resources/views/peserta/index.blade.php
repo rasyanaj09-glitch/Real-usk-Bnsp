@@ -1,4 +1,3 @@
-```blade
 <!DOCTYPE html>
 <html lang="id">
 
@@ -49,6 +48,13 @@
             font-size: 21px;
         }
 
+        /* Container khusus tombol di header */
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
         .btn {
             display: inline-block;
             padding: 9px 15px;
@@ -67,6 +73,15 @@
 
         .btn-light:hover {
             background: #e9ecef;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5c636a;
         }
 
         .card-body {
@@ -224,6 +239,16 @@
                 gap: 15px;
             }
 
+            .header-buttons {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .header-buttons .btn {
+                width: 100%;
+                text-align: center;
+            }
+
             .card-body {
                 padding: 15px;
             }
@@ -265,11 +290,17 @@
                     Daftar Peserta Sertifikasi
                 </h2>
 
-                <a
-                    href="{{ route('peserta.create') }}"
-                    class="btn btn-light">
-                    Tambah Peserta Baru
-                </a>
+                <div class="header-buttons">
+                    <!-- Tombol Kembali ke Dashboard -->
+                    <a href="{{ route('dashboard') }}" class="btn btn-secondary">
+                        Kembali ke Dashboard
+                    </a>
+
+                    <!-- Tombol Tambah Peserta -->
+                    <a href="{{ route('peserta.create') }}" class="btn btn-light">
+                        Tambah Peserta Baru
+                    </a>
+                </div>
 
             </div>
 
@@ -286,7 +317,7 @@
                         type="button"
                         class="btn-close"
                         onclick="this.parentElement.style.display='none'">
-                        ×
+                        
                     </button>
 
                 </div>
@@ -304,7 +335,7 @@
                         type="button"
                         class="btn-close"
                         onclick="this.parentElement.style.display='none'">
-                        ×
+                        
                     </button>
 
                 </div>
@@ -467,4 +498,3 @@
 </body>
 
 </html>
-```
