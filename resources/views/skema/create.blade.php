@@ -183,9 +183,9 @@
 
                 {{-- Alert Notification jika ada error global --}}
                 @if(session('error'))
-                    <div class="alert-danger">
-                        {{ session('error') }}
-                    </div>
+                <div class="alert-danger">
+                    {{ session('error') }}
+                </div>
                 @endif
 
                 <form action="{{ route('skema.store') }}" method="POST">
@@ -194,79 +194,133 @@
                     <!-- Input Kode Skema -->
                     <div class="form-group">
                         <label for="kode_skema" class="form-label">Kode Skema</label>
-                        <input 
-                            type="text" 
-                            name="kode_skema" 
-                            id="kode_skema" 
-                            class="form-control @error('kode_skema') is-invalid @enderror" 
+                        <input
+                            type="text"
+                            name="kode_skema"
+                            id="kode_skema"
+                            class="form-control @error('kode_skema') is-invalid @enderror"
                             placeholder="Contoh: SKM/01/2026"
-                            value="{{ old('kode_skema') }}" 
+                            value="{{ old('kode_skema') }}"
                             required>
 
                         @error('kode_skema')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
                         @enderror
                     </div>
 
                     <!-- Input Nama Skema -->
                     <div class="form-group">
                         <label for="nama_skema" class="form-label">Nama Skema Sertifikasi</label>
-                        <input 
-                            type="text" 
-                            name="nama_skema" 
-                            id="nama_skema" 
-                            class="form-control @error('nama_skema') is-invalid @enderror" 
+                        <input
+                            type="text"
+                            name="nama_skema"
+                            id="nama_skema"
+                            class="form-control @error('nama_skema') is-invalid @enderror"
                             placeholder="Contoh: Pemrogram Mobil Utama / Junior Web Developer"
-                            value="{{ old('nama_skema') }}" 
+                            value="{{ old('nama_skema') }}"
                             required>
 
                         @error('nama_skema')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
                         @enderror
                     </div>
+
 
                     <!-- Input Jenis Skema -->
-                    <div class="form-group">
-                        <label for="jenis" class="form-label">Jenis Skema</label>
-                        <select 
-                            name="jenis" 
-                            id="jenis" 
-                            class="form-select @error('jenis') is-invalid @enderror" 
-                            required>
-                            <option value="">-- Pilih Jenis Skema --</option>
-                            <option value="KKNI" {{ old('jenis') == 'KKNI' ? 'selected' : '' }}>KKNI</option>
-                            <option value="Okupasi" {{ old('jenis') == 'Okupasi' ? 'selected' : '' }}>Okupasi</option>
-                            <option value="Klaster" {{ old('jenis') == 'Klaster' ? 'selected' : '' }}>Klaster</option>
-                        </select>
+                    <!-- Input Jenis Skema -->
+<div class="form-group">
+    <label for="jenis_select" class="form-label">Jenis Skema <span style="color: red;">*</span></label>
+    
+    <!-- Dropdown Opsi -->
+    <select id="jenis_select" class="form-select" onchange="toggleJenisCustom(this)">
+        <option value="">-- Pilih Jenis Skema --</option>
+        @foreach($jenisList ?? [] as $j)
+            <option value="{{ $j }}" {{ old('jenis') == $j ? 'selected' : '' }}>
+                {{ $j }}
+            </option>
+        @endforeach
+        <option value="custom" {{ old('jenis') && !in_array(old('jenis'), $jenisList ?? []) ? 'selected' : '' }}>
+            + Ketik Jenis Baru...
+        </option>
+    </select>
 
-                        @error('jenis')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
+    <!-- Input Text Kustom (Muncul jika pilih "+ Ketik Jenis Baru...") -->
+    @if (old('jenis') && !in_array(old('jenis'), $jenisList ?? []))
+        <input 
+            type="text" 
+            name="jenis" 
+            id="jenis_input" 
+            class="form-control @error('jenis') is-invalid @enderror" 
+            placeholder="Ketik nama jenis skema baru..."
+            value="{{ old('jenis') }}"
+            style="margin-top: 8px; display: block;"
+            required>
+    @else
+        <input 
+            type="text" 
+            name="jenis" 
+            id="jenis_input" 
+            class="form-control @error('jenis') is-invalid @enderror" 
+            placeholder="Ketik nama jenis skema baru..."
+            value="{{ old('jenis') }}"
+            style="margin-top: 8px; display: none;"
+            required>
+    @endif
+
+    @error('jenis')
+    <div class="invalid-feedback">
+        {{ $message }}
+    </div>
+    @enderror
+</div>
+
+<!-- Script Sederhana untuk Toggle Input -->
+<script>
+    function toggleJenisCustom(selectElement) {
+        const inputCustom = document.getElementById('jenis_input');
+        
+        if (selectElement.value === 'custom') {
+            inputCustom.style.display = 'block';
+            inputCustom.value = '';
+            inputCustom.focus();
+        } else {
+            inputCustom.style.display = 'none';
+            inputCustom.value = selectElement.value;
+        }
+    }
+
+    // Inisialisasi awal saat pertama kali dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('jenis_select');
+        const inputCustom = document.getElementById('jenis_input');
+        
+        if (select.value && select.value !== 'custom') {
+            inputCustom.value = select.value;
+        }
+    });
+</script>
 
                     <!-- Input Jumlah Unit Kompetensi -->
                     <div class="form-group">
                         <label for="jumlah_unit" class="form-label">Jumlah Unit Kompetensi</label>
-                        <input 
-                            type="number" 
-                            name="jumlah_unit" 
-                            id="jumlah_unit" 
-                            class="form-control @error('jumlah_unit') is-invalid @enderror" 
+                        <input
+                            type="number"
+                            name="jumlah_unit"
+                            id="jumlah_unit"
+                            class="form-control @error('jumlah_unit') is-invalid @enderror"
                             placeholder="Contoh: 12"
-                            value="{{ old('jumlah_unit') }}" 
+                            value="{{ old('jumlah_unit') }}"
                             min="1"
                             required>
 
                         @error('jumlah_unit')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
                         @enderror
                     </div>
 
