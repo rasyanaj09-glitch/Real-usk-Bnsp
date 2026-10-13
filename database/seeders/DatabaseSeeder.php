@@ -10,10 +10,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@s.com',
-            'password' => bcrypt('123'),
-        ]);
+    'name'     => 'Administrator',
+    'email'    => 'admin@s.com',
+    'password' => bcrypt('123'),
+    'role'     => 'admin', // <-- Tambahkan ini agar sistem mengenali akun sebagai Admin
+]);
 
         $this->call([
             SkemaSeeder::class,

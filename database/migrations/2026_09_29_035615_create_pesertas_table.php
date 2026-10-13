@@ -10,7 +10,13 @@ return new class extends Migration
     {
         Schema::create('peserta', function (Blueprint $table) {
             $table->id();
+
+            // Terhubung ke tabel users (Jika user terhapus, data peserta otomatis terhapus)
+            $table->foreignId('user_id')
+                  ->constrained('users')
+                  ->onDelete('cascade');
             
+            // Terhubung ke tabel skema_sertifikasi
             $table->foreignId('skema_id')
                   ->constrained('skema_sertifikasi')
                   ->onDelete('cascade'); 

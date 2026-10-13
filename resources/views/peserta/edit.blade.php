@@ -358,6 +358,39 @@
 
                     </div>
 
+                    <hr style="margin: 25px 0; border: none; border-top: 1px dashed #cbd5e1;">
+
+                    <!-- Field Reset Password (Opsional) -->
+                    <div class="form-group">
+
+                        <label
+                            for="password"
+                            class="form-label"
+                            style="color: #dc2626; font-weight: bold;">
+                            Reset Password Peserta (Opsional)
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            class="form-control @error('password') is-invalid @enderror"
+                            placeholder="Kosongkan jika tidak ingin mengubah password">
+
+                        <small style="color: #64748b; display: block; margin-top: 5px;">
+                            *Isi bidang ini hanya jika Admin ingin mereset/mengganti password akun peserta.
+                        </small>
+
+                        @error('password')
+
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+
+                        @enderror
+
+                    </div>
+
 
                     <!-- Tombol Aksi -->
                     <div class="button-container">

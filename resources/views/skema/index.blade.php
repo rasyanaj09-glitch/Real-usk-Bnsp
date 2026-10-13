@@ -327,7 +327,7 @@
 
             <div class="header-buttons">
                 <!-- Tombol Kembali ke Dashboard -->
-                <a href="{{ route('dashboard') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
                     Kembali ke Dashboard
                 </a>
 

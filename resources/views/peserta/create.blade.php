@@ -1,4 +1,4 @@
-```blade
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -281,7 +281,7 @@
                               <div class="form-group">
 
                                    <label class="form-label">
-                                        Email
+                                        Email (Untuk Akun Login)
                                    </label>
 
                                    <input
@@ -292,6 +292,28 @@
                                         required>
 
                                    @error('email')
+                                   <div class="invalid-feedback">
+                                        {{ $message }}
+                                   </div>
+                                   @enderror
+
+                              </div>
+
+                              <!-- Input Password Awal Akun Peserta -->
+                              <div class="form-group">
+
+                                   <label class="form-label">
+                                        Password Akun Peserta
+                                   </label>
+
+                                   <input
+                                        type="password"
+                                        name="password"
+                                        class="form-control @error('password') is-invalid @enderror"
+                                        placeholder="Masukkan password awal peserta (minimal 8 karakter)"
+                                        required>
+
+                                   @error('password')
                                    <div class="invalid-feedback">
                                         {{ $message }}
                                    </div>
@@ -329,4 +351,3 @@
 </body>
 
 </html>
-```

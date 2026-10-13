@@ -381,10 +381,8 @@
 
           <!-- Footer -->
           <div class="login-footer">
-               Belum memiliki hak akses?
-               <a href="#" class="login-link">
-                    Hubungi Admin
-               </a>
+               Belum punya akun peserta?
+               <a href="{{ route('register') }}" class="login-link">Daftar Akun Baru</a>
           </div>
 
      </div>
