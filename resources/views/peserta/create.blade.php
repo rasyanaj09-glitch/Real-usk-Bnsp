@@ -1,352 +1,499 @@
-
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pendaftaran Peserta - Admin Panel</title>
 
-     <title>Form Pendaftaran Peserta</title>
+    <!-- Font & FontAwesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-     <style>
-          * {
-               margin: 0;
-               padding: 0;
-               box-sizing: border-box;
-          }
+    <!-- Client-Side OCR Library (Tesseract.js CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
-          body {
-               font-family: Arial, Helvetica, sans-serif;
-               background: #f4f6f9;
-               color: #333;
-          }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-          .container {
-               width: 100%;
-               min-height: 100vh;
-               padding: 40px 20px;
-          }
+        body {
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+        }
 
-          .form-wrapper {
-               max-width: 800px;
-               margin: 0 auto;
-          }
+        .container {
+            width: 100%;
+            padding: 40px 20px;
+        }
 
-          .card {
-               background: white;
-               border-radius: 15px;
-               overflow: hidden;
-               box-shadow: 0 5px 20px rgba(0, 0, 0, 0.10);
-          }
+        .form-wrapper {
+            max-width: 760px;
+            margin: 0 auto;
+        }
 
-          .card-header {
-               background: linear-gradient(135deg, #212529, #343a40);
-               color: white;
-               padding: 22px 25px;
-          }
+        .card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+        }
 
-          .card-header h2 {
-               font-size: 22px;
-               margin: 0;
-          }
+        .card-header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            padding: 22px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-          .card-body {
-               padding: 30px;
-          }
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-          .form-group {
-               margin-bottom: 22px;
-          }
+        .card-header h2 i {
+            color: #38bdf8;
+        }
 
-          .form-label {
-               display: block;
-               margin-bottom: 8px;
-               font-weight: bold;
-               color: #333;
-          }
+        .card-body {
+            padding: 30px;
+        }
 
-          .form-control,
-          .form-select {
-               width: 100%;
-               padding: 12px 14px;
-               border: 1px solid #ced4da;
-               border-radius: 8px;
-               font-size: 15px;
-               outline: none;
-               background: white;
-               transition: 0.2s;
-          }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
 
-          .form-control:focus,
-          .form-select:focus {
-               border-color: #343a40;
-               box-shadow: 0 0 0 3px rgba(52, 58, 64, 0.12);
-          }
+        .form-group-full {
+            grid-column: span 2;
+        }
 
-          textarea.form-control {
-               resize: vertical;
-               min-height: 100px;
-          }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 0.825rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+        }
 
-          .is-invalid {
-               border-color: #dc3545;
-          }
+        .form-control,
+        .form-select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            outline: none;
+            background: white;
+            color: #0f172a;
+            transition: all 0.2s;
+        }
 
-          .invalid-feedback {
-               display: block;
-               margin-top: 6px;
-               color: #dc3545;
-               font-size: 13px;
-          }
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
 
-          .button-container {
-               display: flex;
-               justify-content: space-between;
-               align-items: center;
-               margin-top: 30px;
-               gap: 15px;
-          }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px;
+        }
 
-          .btn {
-               display: inline-block;
-               padding: 11px 20px;
-               border-radius: 8px;
-               text-decoration: none;
-               border: none;
-               cursor: pointer;
-               font-size: 14px;
-               font-weight: bold;
-               transition: 0.2s;
-          }
+        .ocr-loading {
+            font-size: 0.825rem;
+            color: #2563eb;
+            font-weight: 600;
+            margin-top: 6px;
+            display: none;
+        }
 
-          .btn-secondary {
-               background: #6c757d;
-               color: white;
-          }
+        .is-invalid {
+            border-color: #dc2626 !important;
+        }
 
-          .btn-secondary:hover {
-               background: #5a6268;
-          }
+        .invalid-feedback {
+            display: block;
+            margin-top: 6px;
+            color: #dc2626;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
 
-          .btn-dark {
-               background: #212529;
-               color: white;
-          }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            gap: 15px;
+        }
 
-          .btn-dark:hover {
-               background: #000;
-          }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 22px;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
 
-          @media (max-width: 600px) {
-               .container {
-                    padding: 20px 15px;
-               }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
 
-               .card-body {
-                    padding: 20px;
-               }
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
 
-               .button-container {
-                    flex-direction: column-reverse;
-                    align-items: stretch;
-               }
+        .btn-dark {
+            background: #0f172a;
+            color: white;
+        }
 
-               .btn {
-                    text-align: center;
-                    width: 100%;
-               }
-          }
-     </style>
+        .btn-dark:hover {
+            background: #1e293b;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group-full {
+                grid-column: span 1;
+            }
+
+            .button-container {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            .btn {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-     <div class="container">
+    <div class="container">
 
-          <div class="form-wrapper">
+        <div class="form-wrapper">
 
-               <div class="card">
+            <div class="card">
 
-                    <div class="card-header">
-                         <h2>Form Pendaftaran Peserta</h2>
-                    </div>
+                <div class="card-header">
+                    <h2>
+                        <i class="fa-solid fa-user-plus"></i> Form Pendaftaran Peserta
+                    </h2>
+                </div>
 
-                    <div class="card-body">
+                <div class="card-body">
 
-                         <form action="{{ route('peserta.store') }}" method="POST">
+                    <form action="{{ route('peserta.store') }}" method="POST" enctype="multipart/form-data">
 
-                              @csrf
+                        @csrf
 
-                              <div class="form-group">
+                        <div class="form-grid">
 
-                                   <label class="form-label">
-                                        Skema Sertifikasi
-                                   </label>
+                            <!-- Upload Foto KTP & OCR -->
+                            <div class="form-group-full">
+                                <label class="form-label">
+                                    Upload Foto KTP (JPG / PNG)
+                                </label>
 
-                                   <select
-                                        name="skema_id"
-                                        class="form-select @error('skema_id') is-invalid @enderror"
-                                        required>
+                                <input 
+                                    type="file" 
+                                    name="foto_ktp" 
+                                    id="foto_ktp" 
+                                    accept="image/*" 
+                                    class="form-control @error('foto_ktp') is-invalid @enderror"
+                                    onchange="scanKTP(event)">
 
-                                        <option value="">
-                                             -- Pilih Skema Sertifikasi --
-                                        </option>
+                                <div id="ocr-status" class="ocr-loading">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Membaca data NIK & Jenis Kelamin secara otomatis dari KTP...
+                                </div>
 
-                                        @foreach($skemas as $skema)
+                                @error('foto_ktp')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                                        <option
-                                             value="{{ $skema->id }}"
-                                             {{ old('skema_id') == $skema->id ? 'selected' : '' }}>
-                                             {{ $skema->kode_skema }} - {{ $skema->nama_skema }}
-                                        </option>
+                            <!-- NIK (Nomor Induk Kependudukan) -->
+                            <div>
+                                <label class="form-label">
+                                    NIK (16 Digit)
+                                </label>
 
-                                        @endforeach
+                                <input 
+                                    type="text" 
+                                    name="nik" 
+                                    id="nik" 
+                                    class="form-control @error('nik') is-invalid @enderror" 
+                                    value="{{ old('nik') }}" 
+                                    placeholder="16 Digit NIK (Terisi Otomatis)" 
+                                    maxlength="16" 
+                                    required>
 
-                                   </select>
+                                @error('nik')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                                   @error('skema_id')
-                                   <div class="invalid-feedback">
-                                        {{ $message }}
-                                   </div>
-                                   @enderror
+                            <!-- Jenis Kelamin -->
+                            <div>
+                                <label class="form-label">
+                                    Jenis Kelamin
+                                </label>
 
-                              </div>
+                                <select 
+                                    name="jenis_kelamin" 
+                                    id="jenis_kelamin" 
+                                    class="form-select @error('jenis_kelamin') is-invalid @enderror" 
+                                    required>
+                                    
+                                    <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
+                                    <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-Laki</option>
+                                    <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                                </select>
 
+                                @error('jenis_kelamin')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                              <div class="form-group">
+                            <!-- Skema Sertifikasi -->
+                            <div class="form-group-full">
+                                <label class="form-label">
+                                    Skema Sertifikasi
+                                </label>
 
-                                   <label class="form-label">
-                                        Nama Lengkap
-                                   </label>
+                                <select 
+                                    name="skema_id" 
+                                    class="form-select @error('skema_id') is-invalid @enderror" 
+                                    required>
 
-                                   <input
-                                        type="text"
-                                        name="nama_peserta"
-                                        class="form-control @error('nama_peserta') is-invalid @enderror"
-                                        value="{{ old('nama_peserta') }}"
-                                        required>
+                                    <option value="">
+                                        -- Pilih Skema Sertifikasi --
+                                    </option>
 
-                                   @error('nama_peserta')
-                                   <div class="invalid-feedback">
-                                        {{ $message }}
-                                   </div>
-                                   @enderror
+                                    @foreach($skemas as $skema)
+                                    <option 
+                                        value="{{ $skema->id }}" 
+                                        {{ old('skema_id') == $skema->id ? 'selected' : '' }}>
+                                        {{ $skema->kode_skema }} - {{ $skema->nama_skema }}
+                                    </option>
+                                    @endforeach
 
-                              </div>
+                                </select>
 
+                                @error('skema_id')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                              <div class="form-group">
+                            <!-- Nama Lengkap -->
+                            <div class="form-group-full">
+                                <label class="form-label">
+                                    Nama Lengkap
+                                </label>
 
-                                   <label class="form-label">
-                                        Alamat
-                                   </label>
+                                <input 
+                                    type="text" 
+                                    name="nama_peserta" 
+                                    class="form-control @error('nama_peserta') is-invalid @enderror" 
+                                    value="{{ old('nama_peserta') }}" 
+                                    placeholder="Sesuai KTP" 
+                                    required>
 
-                                   <textarea
-                                        name="alamat"
-                                        class="form-control @error('alamat') is-invalid @enderror"
-                                        rows="3"
-                                        required>{{ old('alamat') }}</textarea>
+                                @error('nama_peserta')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                                   @error('alamat')
-                                   <div class="invalid-feedback">
-                                        {{ $message }}
-                                   </div>
-                                   @enderror
+                            <!-- Email -->
+                            <div>
+                                <label class="form-label">
+                                    Email (Untuk Akun Login)
+                                </label>
 
-                              </div>
+                                <input 
+                                    type="email" 
+                                    name="email" 
+                                    class="form-control @error('email') is-invalid @enderror" 
+                                    value="{{ old('email') }}" 
+                                    placeholder="nama@email.com" 
+                                    required>
 
+                                @error('email')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                              <div class="form-group">
+                            <!-- No. Handphone -->
+                            <div>
+                                <label class="form-label">
+                                    No. Handphone / WA
+                                </label>
 
-                                   <label class="form-label">
-                                        No. Handphone
-                                   </label>
+                                <input 
+                                    type="text" 
+                                    name="no_hp" 
+                                    class="form-control @error('no_hp') is-invalid @enderror" 
+                                    value="{{ old('no_hp') }}" 
+                                    placeholder="Contoh: 081234567890" 
+                                    required>
 
-                                   <input
-                                        type="text"
-                                        name="no_hp"
-                                        class="form-control @error('no_hp') is-invalid @enderror"
-                                        value="{{ old('no_hp') }}"
-                                        required>
+                                @error('no_hp')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                                   @error('no_hp')
-                                   <div class="invalid-feedback">
-                                        {{ $message }}
-                                   </div>
-                                   @enderror
+                            <!-- Alamat -->
+                            <div class="form-group-full">
+                                <label class="form-label">
+                                    Alamat Lengkap
+                                </label>
 
-                              </div>
+                                <textarea 
+                                    name="alamat" 
+                                    class="form-control @error('alamat') is-invalid @enderror" 
+                                    rows="3" 
+                                    placeholder="Sesuai KTP / Domisili" 
+                                    required>{{ old('alamat') }}</textarea>
 
+                                @error('alamat')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                              <div class="form-group">
+                            <!-- Password Awal Akun Peserta -->
+                            <div class="form-group-full">
+                                <label class="form-label">
+                                    Password Akun Peserta
+                                </label>
 
-                                   <label class="form-label">
-                                        Email (Untuk Akun Login)
-                                   </label>
+                                <input 
+                                    type="password" 
+                                    name="password" 
+                                    class="form-control @error('password') is-invalid @enderror" 
+                                    placeholder="Masukkan password awal peserta (minimal 8 karakter)" 
+                                    required>
 
-                                   <input
-                                        type="email"
-                                        name="email"
-                                        class="form-control @error('email') is-invalid @enderror"
-                                        value="{{ old('email') }}"
-                                        required>
+                                @error('password')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
 
-                                   @error('email')
-                                   <div class="invalid-feedback">
-                                        {{ $message }}
-                                   </div>
-                                   @enderror
+                        </div>
 
-                              </div>
+                        <!-- Button Container -->
+                        <div class="button-container">
+                            <a href="{{ route('peserta.index') }}" class="btn btn-secondary">
+                                <i class="fa-solid fa-arrow-left"></i> Kembali
+                            </a>
 
-                              <!-- Input Password Awal Akun Peserta -->
-                              <div class="form-group">
+                            <button type="submit" class="btn btn-dark">
+                                <i class="fa-solid fa-floppy-disk"></i> Daftarkan Peserta
+                            </button>
+                        </div>
 
-                                   <label class="form-label">
-                                        Password Akun Peserta
-                                   </label>
+                    </form>
 
-                                   <input
-                                        type="password"
-                                        name="password"
-                                        class="form-control @error('password') is-invalid @enderror"
-                                        placeholder="Masukkan password awal peserta (minimal 8 karakter)"
-                                        required>
+                </div>
 
-                                   @error('password')
-                                   <div class="invalid-feedback">
-                                        {{ $message }}
-                                   </div>
-                                   @enderror
+            </div>
 
-                              </div>
+        </div>
 
+    </div>
 
-                              <div class="button-container">
+    <!-- Script Client-Side OCR Tesseract.js -->
+    <script>
+    function scanKTP(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-                                   <a
-                                        href="{{ route('peserta.index') }}"
-                                        class="btn btn-secondary">
-                                        Kembali
-                                   </a>
+        const ocrStatus = document.getElementById('ocr-status');
+        ocrStatus.style.display = 'block';
 
-                                   <button
-                                        type="submit"
-                                        class="btn btn-dark">
-                                        Daftarkan Peserta
-                                   </button>
+        Tesseract.recognize(
+            file,
+            'ind',
+            { logger: m => console.log(m) }
+        ).then(({ data: { text } }) => {
+            ocrStatus.style.display = 'none';
 
-                              </div>
+            // 1. Ekstrak 16 Digit NIK menggunakan Regex Match
+            const nikMatches = text.match(/\b\d{16}\b/);
+            if (nikMatches && nikMatches.length > 0) {
+                document.getElementById('nik').value = nikMatches[0];
+            }
 
-                         </form>
-
-                    </div>
-
-               </div>
-
-          </div>
-
-     </div>
+            // 2. Ekstrak Jenis Kelamin
+            const upperText = text.toUpperCase();
+            if (upperText.includes('LAKI') || upperText.includes('LAKI-LAKI')) {
+                document.getElementById('jenis_kelamin').value = 'L';
+            } else if (upperText.includes('PEREMPUAN') || upperText.includes('WANITA')) {
+                document.getElementById('jenis_kelamin').value = 'P';
+            }
+        }).catch(err => {
+            ocrStatus.style.display = 'none';
+            console.error(err);
+            alert('Gagal membaca KTP secara otomatis. Silakan isi NIK & Jenis Kelamin secara manual.');
+        });
+    }
+    </script>
 
 </body>
 

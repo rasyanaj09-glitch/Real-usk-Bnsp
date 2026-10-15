@@ -5,8 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PesertaController;
 use App\Http\Controllers\SkemaController;
 
-
-// 1. Landing Page / Halaman Utama Publik (Memanggil resources/views/home.blade.php)
+// 1. Landing Page / Halaman Utama Publik
 Route::get('/', function () {
     return view('home');
 })->name('home');
@@ -31,14 +30,18 @@ Route::middleware(['auth'])->group(function () {
     // --- DASHBOARD ADMIN ---
     Route::get('/admin/dashboard', [AuthController::class, 'dashboard'])->name('admin.dashboard');
 
-    // --- DASHBOARD PESERTA (Khusus Hak Akses Peserta) ---
+    // --- DASHBOARD PESERTA ---
     Route::get('/peserta/dashboard', [AuthController::class, 'pesertaDashboard'])->name('peserta.dashboard');
     Route::put('/peserta/profile/update', [AuthController::class, 'updateProfile'])->name('peserta.profile.update');
 
     // --- FITUR KELOLA DATA UNTUK ADMIN ---
-    // Mengakses file di resources/views/peserta (index, create, edit, show)
+    // Route khusus verifikasi & tolak pendaftaran peserta
+    Route::put('/peserta/{id}/verifikasi', [PesertaController::class, 'verifikasi'])->name('peserta.verifikasi');
+    Route::put('/peserta/{id}/tolak', [PesertaController::class, 'tolak'])->name('peserta.tolak');
+
+    // CRUD Data Peserta (index, create, store, show, edit, update, destroy)
     Route::resource('peserta', PesertaController::class);
 
-    // Mengakses file di resources/views/skema (index, create, edit)
+    // CRUD Data Skema
     Route::resource('skema', SkemaController::class);
 });

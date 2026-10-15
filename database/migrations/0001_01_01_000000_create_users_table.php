@@ -15,6 +15,10 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['admin', 'peserta'])->default('peserta');
+            
+           // kolom status_verifikasi untuk penahanan login peserta
+            $table->enum('status_verifikasi', ['pending', 'approved', 'rejected'])->default('pending');
+            
             $table->rememberToken();
             $table->timestamps();
         });

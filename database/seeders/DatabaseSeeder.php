@@ -13,7 +13,8 @@ class DatabaseSeeder extends Seeder
     'name'     => 'Administrator',
     'email'    => 'admin@s.com',
     'password' => bcrypt('123'),
-    'role'     => 'admin', // <-- Tambahkan ini agar sistem mengenali akun sebagai Admin
+    'role'     => 'admin', 
+    'status_verifikasi' => 'approved',
 ]);
 
         $this->call([

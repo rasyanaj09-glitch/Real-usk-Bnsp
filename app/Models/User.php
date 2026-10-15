@@ -22,7 +22,8 @@ class User extends Authenticatable
     'email',
     'password',
     'role', 
-    'skema_id'
+    'skema_id',
+    'status_verifikasi',
 ];
 
     /**

@@ -8,6 +8,7 @@ use App\Models\SkemaSertifikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PesertaController extends Controller
 {
@@ -20,6 +21,7 @@ class PesertaController extends Controller
             $query->where(function ($q) use ($keyword) {
                 $q->where('nama_peserta', 'LIKE', "%$keyword%")
                   ->orWhere('email', 'LIKE', "%$keyword%")
+                  ->orWhere('nik', 'LIKE', "%$keyword%")
                   ->orWhere('no_hp', 'LIKE', "%$keyword%");
             });
         }
@@ -34,35 +36,46 @@ class PesertaController extends Controller
         return view('peserta.create', compact('skemas'));
     }
 
-    // 1. ADMIN MEMBUAT AKUN PESERTA BARU (DENGAN PASSWORD INITIAL)
+    // 1. ADMIN MEMBUAT AKUN PESERTA BARU (LANGSUNG APPROVED)
     public function store(Request $request)
     {
         $request->validate([
-            'skema_id'     => 'required|exists:skema_sertifikasi,id',
-            'nama_peserta' => 'required|string|max:255',
-            'alamat'       => 'required|string',
-            'no_hp'        => 'required|string|max:20',
-            'email'        => 'required|email|unique:users,email|unique:peserta,email',
-            'password'     => 'required|string|min:8',
+            'skema_id'      => 'required|exists:skema_sertifikasi,id',
+            'nik'           => 'required|numeric|digits:16|unique:peserta,nik',
+            'jenis_kelamin' => 'required|in:L,P',
+            'foto_ktp'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'nama_peserta'  => 'required|string|max:255',
+            'alamat'        => 'required|string',
+            'no_hp'         => 'required|string|max:20',
+            'email'         => 'required|email|unique:users,email|unique:peserta,email',
+            'password'      => 'required|string|min:8',
         ]);
 
-        DB::transaction(function () use ($request) {
-            // Buat akun User (login) untuk peserta
+        $ktpPath = null;
+        if ($request->hasFile('foto_ktp')) {
+            $ktpPath = $request->file('foto_ktp')->store('ktp', 'public');
+        }
+
+        DB::transaction(function () use ($request, $ktpPath) {
+            // Karena dibuat langsung oleh Admin, status_verifikasi di-set 'approved'
             $user = User::create([
-                'name'     => $request->nama_peserta,
-                'email'    => $request->email,
-                'password' => Hash::make($request->password),
-                'role'     => 'peserta',
+                'name'              => $request->nama_peserta,
+                'email'             => $request->email,
+                'password'          => Hash::make($request->password),
+                'role'              => 'peserta',
+                'status_verifikasi' => 'approved',
             ]);
 
-            // Buat data detail peserta
             Peserta::create([
-                'user_id'      => $user->id,
-                'skema_id'     => $request->skema_id,
-                'nama_peserta' => $request->nama_peserta,
-                'alamat'       => $request->alamat,
-                'no_hp'        => $request->no_hp,
-                'email'        => $request->email,
+                'user_id'       => $user->id,
+                'skema_id'      => $request->skema_id,
+                'nik'           => $request->nik,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'foto_ktp'      => $ktpPath,
+                'nama_peserta'  => $request->nama_peserta,
+                'alamat'        => $request->alamat,
+                'no_hp'         => $request->no_hp,
+                'email'         => $request->email,
             ]);
         });
 
@@ -82,38 +95,50 @@ class PesertaController extends Controller
         return view('peserta.edit', compact('peserta', 'skemas'));
     }
 
-    // 2. ADMIN EDIT DATA & RESET PASSWORD PESERTA
+    // 2. ADMIN EDIT DATA PESERTA & UPLOAD/UPDATE KTP
     public function update(Request $request, $id)
     {
         $peserta = Peserta::findOrFail($id);
 
         $request->validate([
-            'skema_id'     => 'required|exists:skema_sertifikasi,id',
-            'nama_peserta' => 'required|string|max:255',
-            'alamat'       => 'required|string',
-            'no_hp'        => 'required|string|max:20',
-            'email'        => 'required|email|unique:peserta,email,' . $id . '|unique:users,email,' . $peserta->user_id,
-            'password'     => 'nullable|string|min:8', // Nullable: Diisi jika Admin ingin Reset Password
+            'skema_id'      => 'required|exists:skema_sertifikasi,id',
+            'nik'           => 'required|numeric|digits:16|unique:peserta,nik,' . $id,
+            'jenis_kelamin' => 'required|in:L,P',
+            'foto_ktp'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'nama_peserta'  => 'required|string|max:255',
+            'alamat'        => 'required|string',
+            'no_hp'         => 'required|string|max:20',
+            'email'         => 'required|email|unique:peserta,email,' . $id . '|unique:users,email,' . $peserta->user_id,
+            'password'      => 'nullable|string|min:8',
         ]);
 
-        DB::transaction(function () use ($request, $peserta) {
-            // Update tabel Peserta
+        $ktpPath = $peserta->foto_ktp;
+        if ($request->hasFile('foto_ktp')) {
+            // Hapus foto KTP lama jika ada
+            if ($peserta->foto_ktp) {
+                Storage::disk('public')->delete($peserta->foto_ktp);
+            }
+            $ktpPath = $request->file('foto_ktp')->store('ktp', 'public');
+        }
+
+        DB::transaction(function () use ($request, $peserta, $ktpPath) {
             $peserta->update([
-                'skema_id'     => $request->skema_id,
-                'nama_peserta' => $request->nama_peserta,
-                'alamat'       => $request->alamat,
-                'no_hp'        => $request->no_hp,
-                'email'        => $request->email,
+                'skema_id'      => $request->skema_id,
+                'nik'           => $request->nik,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'foto_ktp'      => $ktpPath,
+                'nama_peserta'  => $request->nama_peserta,
+                'alamat'        => $request->alamat,
+                'no_hp'         => $request->no_hp,
+                'email'         => $request->email,
             ]);
 
-            // Update tabel Users (Akun Login & Password)
             if ($peserta->user) {
                 $userData = [
                     'name'  => $request->nama_peserta,
                     'email' => $request->email,
                 ];
 
-                // Jika kolom password diisi oleh Admin, lakukan Reset Password
                 if ($request->filled('password')) {
                     $userData['password'] = Hash::make($request->password);
                 }
@@ -122,13 +147,48 @@ class PesertaController extends Controller
             }
         });
 
-        return redirect()->route('peserta.index')->with('success', 'Data & password peserta berhasil diperbarui.');
+        return redirect()->route('peserta.index')->with('success', 'Data & profil peserta berhasil diperbarui.');
     }
 
+    // 3. ADMIN VERIFIKASI (APPROVE) AKUN PESERTA
+    public function verifikasi($id)
+    {
+        $peserta = Peserta::findOrFail($id);
+
+        if ($peserta->user) {
+            $peserta->user->update([
+                'status_verifikasi' => 'approved'
+            ]);
+        }
+
+        return back()->with('success', 'Akun peserta ' . $peserta->nama_peserta . ' berhasil diverifikasi.');
+    }
+
+    // 4. ADMIN TOLAK (REJECT) AKUN PESERTA
+    public function tolak($id)
+    {
+        $peserta = Peserta::findOrFail($id);
+
+        if ($peserta->user) {
+            $peserta->user->update([
+                'status_verifikasi' => 'rejected'
+            ]);
+        }
+
+        return back()->with('success', 'Pendaftaran peserta ' . $peserta->nama_peserta . ' telah ditolak.');
+    }
+
+    // 5. HAPUS PESERTA & BERKAS KTP
     public function destroy($id)
     {
         $peserta = Peserta::findOrFail($id);
 
+        // Hapus file KTP dari storage jika ada
+        if ($peserta->foto_ktp) {
+            Storage::disk('public')->delete($peserta->foto_ktp);
+        }
+
+        // Hapus User (Otomatis menghapus Peserta karena cascade)
         if ($peserta->user) {
             $peserta->user->delete();
         } else {

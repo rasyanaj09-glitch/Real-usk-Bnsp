@@ -10,7 +10,17 @@ class Peserta extends Model
 
      protected $table = 'peserta'; 
 
-    protected $fillable = ['user_id','skema_id', 'nama_peserta', 'alamat', 'no_hp', 'email'];
+   protected $fillable = [
+    'user_id',
+    'skema_id',
+    'nik',
+    'jenis_kelamin',
+    'foto_ktp',
+    'nama_peserta',
+    'alamat',
+    'no_hp',
+    'email',
+];
 
      public function skema(): BelongsTo
     {

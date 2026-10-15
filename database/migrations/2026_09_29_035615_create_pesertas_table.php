@@ -11,20 +11,25 @@ return new class extends Migration
         Schema::create('peserta', function (Blueprint $table) {
             $table->id();
 
-            // Terhubung ke tabel users (Jika user terhapus, data peserta otomatis terhapus)
+            // Foreign Key ke tabel users & skema
             $table->foreignId('user_id')
                   ->constrained('users')
                   ->onDelete('cascade');
-            
-            // Terhubung ke tabel skema_sertifikasi
+
             $table->foreignId('skema_id')
                   ->constrained('skema_sertifikasi')
-                  ->onDelete('cascade'); 
-            
+                  ->onDelete('cascade');
+
+            // Data KTP & Identitas Peserta
+            $table->string('nik', 16)->unique();
+            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->string('foto_ktp')->nullable();
+
             $table->string('nama_peserta');
             $table->text('alamat');
             $table->string('no_hp');
             $table->string('email')->unique();
+
             $table->timestamps();
         });
     }
