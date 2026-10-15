@@ -16,10 +16,14 @@ class Peserta extends Model
     'nik',
     'jenis_kelamin',
     'foto_ktp',
+        'ijazah',
+    'foto_sertifikat',
     'nama_peserta',
     'alamat',
     'no_hp',
     'email',
+    'ijazah',
+    'foto_sertifikat',
 ];
 
      public function skema(): BelongsTo

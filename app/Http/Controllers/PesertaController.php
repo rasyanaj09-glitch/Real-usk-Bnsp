@@ -40,15 +40,17 @@ class PesertaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'skema_id'      => 'required|exists:skema_sertifikasi,id',
-            'nik'           => 'required|numeric|digits:16|unique:peserta,nik',
-            'jenis_kelamin' => 'required|in:L,P',
-            'foto_ktp'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'nama_peserta'  => 'required|string|max:255',
-            'alamat'        => 'required|string',
-            'no_hp'         => 'required|string|max:20',
-            'email'         => 'required|email|unique:users,email|unique:peserta,email',
-            'password'      => 'required|string|min:8',
+            'skema_id'        => 'required|exists:skema_sertifikasi,id',
+            'nik'             => 'required|numeric|digits:16|unique:peserta,nik',
+            'jenis_kelamin'   => 'required|in:L,P',
+            'foto_ktp'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ijazah'          => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_sertifikat' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'nama_peserta'    => 'required|string|max:255',
+            'alamat'          => 'required|string',
+            'no_hp'           => 'required|string|max:20',
+            'email'           => 'required|email|unique:users,email|unique:peserta,email',
+            'password'        => 'required|string|min:8',
         ]);
 
         $ktpPath = null;
@@ -56,8 +58,17 @@ class PesertaController extends Controller
             $ktpPath = $request->file('foto_ktp')->store('ktp', 'public');
         }
 
-        DB::transaction(function () use ($request, $ktpPath) {
-            // Karena dibuat langsung oleh Admin, status_verifikasi di-set 'approved'
+        $ijazahPath = null;
+        if ($request->hasFile('ijazah')) {
+            $ijazahPath = $request->file('ijazah')->store('ijazah', 'public');
+        }
+
+        $sertifikatPath = null;
+        if ($request->hasFile('foto_sertifikat')) {
+            $sertifikatPath = $request->file('foto_sertifikat')->store('foto_sertifikat', 'public');
+        }
+
+        DB::transaction(function () use ($request, $ktpPath, $ijazahPath, $sertifikatPath) {
             $user = User::create([
                 'name'              => $request->nama_peserta,
                 'email'             => $request->email,
@@ -67,15 +78,17 @@ class PesertaController extends Controller
             ]);
 
             Peserta::create([
-                'user_id'       => $user->id,
-                'skema_id'      => $request->skema_id,
-                'nik'           => $request->nik,
-                'jenis_kelamin' => $request->jenis_kelamin,
-                'foto_ktp'      => $ktpPath,
-                'nama_peserta'  => $request->nama_peserta,
-                'alamat'        => $request->alamat,
-                'no_hp'         => $request->no_hp,
-                'email'         => $request->email,
+                'user_id'         => $user->id,
+                'skema_id'        => $request->skema_id,
+                'nik'             => $request->nik,
+                'jenis_kelamin'   => $request->jenis_kelamin,
+                'foto_ktp'        => $ktpPath,
+                'ijazah'          => $ijazahPath,
+                'foto_sertifikat' => $sertifikatPath,
+                'nama_peserta'    => $request->nama_peserta,
+                'alamat'          => $request->alamat,
+                'no_hp'           => $request->no_hp,
+                'email'           => $request->email,
             ]);
         });
 
@@ -95,42 +108,64 @@ class PesertaController extends Controller
         return view('peserta.edit', compact('peserta', 'skemas'));
     }
 
-    // 2. ADMIN EDIT DATA PESERTA & UPLOAD/UPDATE KTP
+    // 2. ADMIN EDIT DATA PESERTA & UPLOAD/UPDATE BERKAS
     public function update(Request $request, string $id)
     {
         $peserta = Peserta::findOrFail($id);
 
         $request->validate([
-            'skema_id'      => 'required|exists:skema_sertifikasi,id',
-            'nik'           => 'required|numeric|digits:16|unique:peserta,nik,' . $id,
-            'jenis_kelamin' => 'required|in:L,P',
-            'foto_ktp'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'nama_peserta'  => 'required|string|max:255',
-            'alamat'        => 'required|string',
-            'no_hp'         => 'required|string|max:20',
-            'email'         => 'required|email|unique:peserta,email,' . $id . '|unique:users,email,' . $peserta->user_id,
-            'password'      => 'nullable|string|min:8',
+            'skema_id'        => 'required|exists:skema_sertifikasi,id',
+            'nik'             => 'required|numeric|digits:16|unique:peserta,nik,' . $id,
+            'jenis_kelamin'   => 'required|in:L,P',
+            'foto_ktp'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'ijazah'          => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_sertifikat' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'nama_peserta'    => 'required|string|max:255',
+            'alamat'          => 'required|string',
+            'no_hp'           => 'required|string|max:20',
+            'email'           => 'required|email|unique:peserta,email,' . $id . '|unique:users,email,' . $peserta->user_id,
+            'password'        => 'nullable|string|min:8',
         ]);
 
+        // Handing Foto KTP
         $ktpPath = $peserta->foto_ktp;
         if ($request->hasFile('foto_ktp')) {
-            // Hapus foto KTP lama jika ada
             if ($peserta->foto_ktp) {
                 Storage::disk('public')->delete($peserta->foto_ktp);
             }
             $ktpPath = $request->file('foto_ktp')->store('ktp', 'public');
         }
 
-        DB::transaction(function () use ($request, $peserta, $ktpPath) {
+        // Handling Ijazah
+        $ijazahPath = $peserta->ijazah;
+        if ($request->hasFile('ijazah')) {
+            if ($peserta->ijazah) {
+                Storage::disk('public')->delete($peserta->ijazah);
+            }
+            $ijazahPath = $request->file('ijazah')->store('ijazah', 'public');
+        }
+
+        // Handling Foto Sertifikat
+        $sertifikatPath = $peserta->foto_sertifikat;
+        if ($request->hasFile('foto_sertifikat')) {
+            if ($peserta->foto_sertifikat) {
+                Storage::disk('public')->delete($peserta->foto_sertifikat);
+            }
+            $sertifikatPath = $request->file('foto_sertifikat')->store('foto_sertifikat', 'public');
+        }
+
+        DB::transaction(function () use ($request, $peserta, $ktpPath, $ijazahPath, $sertifikatPath) {
             $peserta->update([
-                'skema_id'      => $request->skema_id,
-                'nik'           => $request->nik,
-                'jenis_kelamin' => $request->jenis_kelamin,
-                'foto_ktp'      => $ktpPath,
-                'nama_peserta'  => $request->nama_peserta,
-                'alamat'        => $request->alamat,
-                'no_hp'         => $request->no_hp,
-                'email'         => $request->email,
+                'skema_id'        => $request->skema_id,
+                'nik'             => $request->nik,
+                'jenis_kelamin'   => $request->jenis_kelamin,
+                'foto_ktp'        => $ktpPath,
+                'ijazah'          => $ijazahPath,
+                'foto_sertifikat' => $sertifikatPath,
+                'nama_peserta'    => $request->nama_peserta,
+                'alamat'          => $request->alamat,
+                'no_hp'           => $request->no_hp,
+                'email'           => $request->email,
             ]);
 
             if ($peserta->user) {
@@ -178,7 +213,7 @@ class PesertaController extends Controller
         return back()->with('success', 'Pendaftaran peserta ' . $peserta->nama_peserta . ' telah ditolak silahkan hubungi admin.');
     }
 
-    // 5. HAPUS PESERTA & BERKAS KTP
+    // 5. HAPUS PESERTA & SELURUH BERKAS STORAGE
     public function destroy(string $id)
     {
         $peserta = Peserta::findOrFail($id);
@@ -188,7 +223,17 @@ class PesertaController extends Controller
             Storage::disk('public')->delete($peserta->foto_ktp);
         }
 
-        // Hapus User (Otomatis menghapus Peserta karena cascade)
+        // Hapus file Ijazah dari storage jika ada
+        if ($peserta->ijazah) {
+            Storage::disk('public')->delete($peserta->ijazah);
+        }
+
+        // Hapus file Foto Sertifikat dari storage jika ada
+        if ($peserta->foto_sertifikat) {
+            Storage::disk('public')->delete($peserta->foto_sertifikat);
+        }
+
+        // Hapus User (Otomatis menghapus Peserta jika menggunakan cascade)
         if ($peserta->user) {
             $peserta->user->delete();
         } else {

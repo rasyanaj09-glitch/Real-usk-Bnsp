@@ -243,7 +243,7 @@
                                     onchange="scanKTP(event)">
 
                                 <div id="ocr-status" class="ocr-loading">
-                                    <i class="fa-solid fa-spinner fa-spin"></i> Membaca data NIK & Jenis Kelamin secara otomatis dari KTP...
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Membaca data NIK & Jenis Kelamin 
                                 </div>
 
                                 @error('foto_ktp')
@@ -252,6 +252,62 @@
                                 </div>
                                 @enderror
                             </div>
+
+                             <div class="form-grid">
+
+                            <!-- Upload Foto ijazah-->
+                            <div class="form-group-full">
+                                <label class="form-label">
+                                    Upload Foto Ijazah (JPG / PNG)
+                                </label>
+
+                                <input 
+                                    type="file" 
+                                    name="foto_ijazah" 
+                                    id="foto_ijazah" 
+                                    accept="image/*" 
+                                    class="form-control @error('foto_ijazah') is-invalid @enderror"
+                                    onchange="scanIjazah(event)">
+
+                                <div id="ocr-status" class="ocr-loading">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Membaca data Ijazah
+                                </div>
+
+                                @error('foto_ijazah')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+
+                             <div class="form-grid">
+
+                            <!-- Upload Foto sertifikat -->
+                            <div class="form-group-full">
+                                <label class="form-label">
+                                    Upload Foto Sertifikat (JPG / PNG)
+                                </label>
+
+                                <input 
+                                    type="file" 
+                                    name="foto_sertifikat" 
+                                    id="foto_sertifikat" 
+                                    accept="image/*" 
+                                    class="form-control @error('foto_sertifikat') is-invalid @enderror"
+                                    onchange="scanSertifikat(event)">
+
+                                <div id="ocr-status" class="ocr-loading">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Membaca data dari Sertifikat...
+                                </div>
+
+                                @error('foto_sertifikat')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+
+     
 
                             <!-- NIK (Nomor Induk Kependudukan) -->
                             <div>

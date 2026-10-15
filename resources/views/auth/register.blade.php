@@ -245,6 +245,31 @@
                     </div>
                 </div>
 
+                   <!--  Upload Foto ijazah -->
+                <div class="form-group-full">
+                    <label class="form-label">Upload Foto Ijazah (JPG / PNG)</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-id-card input-icon"></i>
+                            <input type="file" name="ijazah" id="ijazah" accept="image/*" class="form-input" required onchange="scanIjazah(event)">
+                    </div>
+                    <div id="ocr-status" class="ocr-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>Silahkan Masukkan Gambar Ijazah
+                    </div>
+                </div>
+
+                <!--  Upload Foto sertifikat -->
+                <div class="form-group-full">
+                    <label class="form-label">Upload Foto Sertifikat (JPG / PNG)</label>
+                    <div class="input-group">
+                        <i class="fa-solid fa-id-card input-icon"></i>
+                         <input type="file" name="sertifikat" id="foto_sertifikat" accept="image/*" class="form-input" required onchange="scanSertifikat(event)">
+                    </div>
+                    <div id="ocr-status" class="ocr-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i>Silahkan Masukkan Gambar Sertifikat
+                    </div>
+                </div>
+
+
                 <!-- 2. NIK Auto-Fill -->
                 <div>
                     <label class="form-label">NIK (16 Digit)</label>

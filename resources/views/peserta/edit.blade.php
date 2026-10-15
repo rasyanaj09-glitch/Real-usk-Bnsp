@@ -251,9 +251,9 @@
 
                 {{-- Alert Notification jika terjadi error sistem --}}
                 @if(session('error'))
-                    <div class="alert">
-                        <i class="fa-solid fa-triangle-exclamation"></i> {{ session('error') }}
-                    </div>
+                <div class="alert">
+                    <i class="fa-solid fa-triangle-exclamation"></i> {{ session('error') }}
+                </div>
                 @endif
 
                 <form action="{{ route('peserta.update', $peserta->id) }}" method="POST" enctype="multipart/form-data">
@@ -268,18 +268,18 @@
                             <label class="form-label">Foto KTP Peserta</label>
 
                             @if($peserta->foto_ktp)
-                                <div class="img-preview-container">
-                                    <a href="{{ asset('storage/' . $peserta->foto_ktp) }}" target="_blank">
-                                        <img src="{{ asset('storage/' . $peserta->foto_ktp) }}" class="img-preview" alt="Foto KTP">
-                                    </a>
-                                </div>
+                            <div class="img-preview-container">
+                                <a href="{{ asset('storage/' . $peserta->foto_ktp) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . $peserta->foto_ktp) }}" class="img-preview" alt="Foto KTP">
+                                </a>
+                            </div>
                             @endif
 
-                            <input 
-                                type="file" 
-                                name="foto_ktp" 
-                                id="foto_ktp" 
-                                accept="image/*" 
+                            <input
+                                type="file"
+                                name="foto_ktp"
+                                id="foto_ktp"
+                                accept="image/*"
                                 class="form-control @error('foto_ktp') is-invalid @enderror">
 
                             <small style="color: #64748b; font-size: 0.75rem; display: block; margin-top: 4px;">
@@ -293,16 +293,77 @@
                             @enderror
                         </div>
 
+                        <!-- Foto Ijazah -->
+                        <div class="form-group-full">
+                            <label class="form-label">Foto Ijazah Peserta</label>
+
+                            <!-- UBAH $peserta->foto_ijazah MENJADI $peserta->ijazah -->
+                            @if($peserta->ijazah)
+                            <div class="img-preview-container">
+                                <a href="{{ asset('storage/' . $peserta->ijazah) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . $peserta->ijazah) }}" class="img-preview" alt="ijazah">
+                                </a>
+                            </div>
+                            @endif
+
+                            <input
+                                type="file"
+                                name="ijazah"
+                                id="ijazah"
+                                accept="image/*"
+                                class="form-control @error('ijazah') is-invalid @enderror">
+
+                            <small style="color: #64748b; font-size: 0.75rem; display: block; margin-top: 4px;">
+                                *Pilih file baru jika ingin memperbarui foto Ijazah. Kosongkan jika tidak ada perubahan.
+                            </small>
+
+                            @error('ijazah')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+
+                        <!-- Foto sertifikat -->
+                        <div class="form-group-full">
+                            <label class="form-label">Foto Sertifikat Peserta</label>
+
+                            @if($peserta->foto_sertifikat)
+                            <div class="img-preview-container">
+                                <a href="{{ asset('storage/' . $peserta->foto_sertifikat) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . $peserta->foto_sertifikat) }}" class="img-preview" alt="Foto Sertifikat">
+                                </a>
+                            </div>
+                            @endif
+
+                            <input
+                                type="file"
+                                name="foto_sertifikat"
+                                id="foto_sertifikat"
+                                accept="image/*"
+                                class="form-control @error('foto_sertifikat') is-invalid @enderror">
+
+                            <small style="color: #64748b; font-size: 0.75rem; display: block; margin-top: 4px;">
+                                *Pilih file baru jika ingin memperbarui foto Sertifikat. Kosongkan jika tidak ada perubahan.
+                            </small>
+
+                            @error('foto_sertifikat')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+
                         <!-- NIK (16 Digit) -->
                         <div>
                             <label for="nik" class="form-label">NIK (Nomor Induk Kependudukan)</label>
-                            <input 
-                                type="text" 
-                                name="nik" 
-                                id="nik" 
-                                class="form-control @error('nik') is-invalid @enderror" 
-                                value="{{ old('nik', $peserta->nik) }}" 
-                                maxlength="16" 
+                            <input
+                                type="text"
+                                name="nik"
+                                id="nik"
+                                class="form-control @error('nik') is-invalid @enderror"
+                                value="{{ old('nik', $peserta->nik) }}"
+                                maxlength="16"
                                 required>
 
                             @error('nik')
@@ -315,10 +376,10 @@
                         <!-- Jenis Kelamin -->
                         <div>
                             <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                            <select 
-                                name="jenis_kelamin" 
-                                id="jenis_kelamin" 
-                                class="form-select @error('jenis_kelamin') is-invalid @enderror" 
+                            <select
+                                name="jenis_kelamin"
+                                id="jenis_kelamin"
+                                class="form-select @error('jenis_kelamin') is-invalid @enderror"
                                 required>
                                 <option value="L" {{ old('jenis_kelamin', $peserta->jenis_kelamin) == 'L' ? 'selected' : '' }}>Laki-Laki</option>
                                 <option value="P" {{ old('jenis_kelamin', $peserta->jenis_kelamin) == 'P' ? 'selected' : '' }}>Perempuan</option>
@@ -334,12 +395,12 @@
                         <!-- Nama Peserta -->
                         <div class="form-group-full">
                             <label for="nama_peserta" class="form-label">Nama Peserta</label>
-                            <input 
-                                type="text" 
-                                name="nama_peserta" 
-                                id="nama_peserta" 
-                                class="form-control @error('nama_peserta') is-invalid @enderror" 
-                                value="{{ old('nama_peserta', $peserta->nama_peserta) }}" 
+                            <input
+                                type="text"
+                                name="nama_peserta"
+                                id="nama_peserta"
+                                class="form-control @error('nama_peserta') is-invalid @enderror"
+                                value="{{ old('nama_peserta', $peserta->nama_peserta) }}"
                                 required>
 
                             @error('nama_peserta')
@@ -352,18 +413,18 @@
                         <!-- Skema Sertifikasi -->
                         <div class="form-group-full">
                             <label for="skema_id" class="form-label">Skema Sertifikasi</label>
-                            <select 
-                                name="skema_id" 
-                                id="skema_id" 
-                                class="form-select @error('skema_id') is-invalid @enderror" 
+                            <select
+                                name="skema_id"
+                                id="skema_id"
+                                class="form-select @error('skema_id') is-invalid @enderror"
                                 required>
                                 <option value="">-- Pilih Skema Sertifikasi --</option>
                                 @foreach($skemas as $skema)
-                                    <option 
-                                        value="{{ $skema->id }}" 
-                                        {{ old('skema_id', $peserta->skema_id) == $skema->id ? 'selected' : '' }}>
-                                        {{ $skema->nama_skema }}
-                                    </option>
+                                <option
+                                    value="{{ $skema->id }}"
+                                    {{ old('skema_id', $peserta->skema_id) == $skema->id ? 'selected' : '' }}>
+                                    {{ $skema->nama_skema }}
+                                </option>
                                 @endforeach
                             </select>
 
@@ -377,12 +438,12 @@
                         <!-- Email -->
                         <div>
                             <label for="email" class="form-label">Email (Akun Login)</label>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                id="email" 
-                                class="form-control @error('email') is-invalid @enderror" 
-                                value="{{ old('email', $peserta->email) }}" 
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                class="form-control @error('email') is-invalid @enderror"
+                                value="{{ old('email', $peserta->email) }}"
                                 required>
 
                             @error('email')
@@ -395,12 +456,12 @@
                         <!-- No HP -->
                         <div>
                             <label for="no_hp" class="form-label">No. HP / WhatsApp</label>
-                            <input 
-                                type="text" 
-                                name="no_hp" 
-                                id="no_hp" 
-                                class="form-control @error('no_hp') is-invalid @enderror" 
-                                value="{{ old('no_hp', $peserta->no_hp) }}" 
+                            <input
+                                type="text"
+                                name="no_hp"
+                                id="no_hp"
+                                class="form-control @error('no_hp') is-invalid @enderror"
+                                value="{{ old('no_hp', $peserta->no_hp) }}"
                                 required>
 
                             @error('no_hp')
@@ -413,11 +474,11 @@
                         <!-- Alamat -->
                         <div class="form-group-full">
                             <label for="alamat" class="form-label">Alamat Lengkap</label>
-                            <textarea 
-                                name="alamat" 
-                                id="alamat" 
-                                class="form-control @error('alamat') is-invalid @enderror" 
-                                rows="3" 
+                            <textarea
+                                name="alamat"
+                                id="alamat"
+                                class="form-control @error('alamat') is-invalid @enderror"
+                                rows="3"
                                 required>{{ old('alamat', $peserta->alamat) }}</textarea>
 
                             @error('alamat')
@@ -436,11 +497,11 @@
                         <label for="password" class="form-label" style="color: #dc2626;">
                             Reset Password Peserta (Opsional)
                         </label>
-                        <input 
-                            type="password" 
-                            name="password" 
-                            id="password" 
-                            class="form-control @error('password') is-invalid @enderror" 
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            class="form-control @error('password') is-invalid @enderror"
                             placeholder="Kosongkan jika tidak ingin mengubah password">
 
                         <small style="color: #64748b; display: block; margin-top: 5px;">

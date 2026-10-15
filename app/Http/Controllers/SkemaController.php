@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\SkemaSertifikasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log; // Wajib di-import untuk best practice logging
-use Illuminate\Support\Facades\DB;   // Wajib di-import untuk database transaction
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;   
 
 class SkemaController extends Controller
 {

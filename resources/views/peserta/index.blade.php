@@ -344,9 +344,7 @@
                     <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
                         <i class="fa-solid fa-arrow-left"></i> Dashboard
                     </a>
-                    <a href="{{ route('peserta.create') }}" class="btn btn-light">
-                        <i class="fa-solid fa-user-plus"></i> Tambah Peserta
-                    </a>
+                   
                 </div>
             </div>
 
@@ -386,6 +384,8 @@
                             <tr>
                                 <th style="width: 4%">No</th>
                                 <th>KTP</th>
+                                <th>Ijazah</th>
+                                <th>Sertifikat</th>
                                 <th>NIK & Nama Peserta</th>
                                 <th>Gender</th>
                                 <th>Skema Sertifikasi</th>
@@ -405,6 +405,28 @@
                                         @if($peserta->foto_ktp)
                                             <a href="{{ asset('storage/' . $peserta->foto_ktp) }}" target="_blank">
                                                 <img src="{{ asset('storage/' . $peserta->foto_ktp) }}" class="img-ktp" alt="KTP">
+                                            </a>
+                                        @else
+                                            <span style="color: #94a3b8; font-size: 0.75rem;">Tidak Ada</span>
+                                        @endif
+                                    </td>
+
+                                    <!-- Ijazah (Ditampilkan berupa gambar/thumbnail) -->
+                                    <td>
+                                        @if($peserta->ijazah)
+                                            <a href="{{ asset('storage/' . $peserta->ijazah) }}" target="_blank">
+                                                <img src="{{ asset('storage/' . $peserta->ijazah) }}" class="img-ktp" alt="Ijazah">
+                                            </a>
+                                        @else
+                                            <span style="color: #94a3b8; font-size: 0.75rem;">Tidak Ada</span>
+                                        @endif
+                                    </td>
+
+                                    <!-- Sertifikat (Ditampilkan berupa gambar/thumbnail menggunakan foto_sertifikat) -->
+                                    <td>
+                                        @if($peserta->foto_sertifikat)
+                                            <a href="{{ asset('storage/' . $peserta->foto_sertifikat) }}" target="_blank">
+                                                <img src="{{ asset('storage/' . $peserta->foto_sertifikat) }}" class="img-ktp" alt="Sertifikat">
                                             </a>
                                         @else
                                             <span style="color: #94a3b8; font-size: 0.75rem;">Tidak Ada</span>
@@ -487,7 +509,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="empty-data">
+                                    <td colspan="10" class="empty-data">
                                         Data peserta tidak ditemukan.
                                     </td>
                                 </tr>

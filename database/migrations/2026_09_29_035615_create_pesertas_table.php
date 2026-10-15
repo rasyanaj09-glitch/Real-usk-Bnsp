@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('nik', 16)->unique();
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->string('foto_ktp')->nullable();
+            $table->string('ijazah')->nullable();
+            $table->string('foto_sertifikat')->nullable();
 
             $table->string('nama_peserta');
             $table->text('alamat');
