@@ -215,7 +215,7 @@
     <div class="register-box">
         <h2 class="title"><i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i> Daftar Akun</h2>
         <p class="subtitle">Buat akun khusus peserta uji kompetensi sertifikasi</p>
-
+        
         <!-- Alert Notification Error -->
         @if ($errors->any())
         <div class="alert-error">

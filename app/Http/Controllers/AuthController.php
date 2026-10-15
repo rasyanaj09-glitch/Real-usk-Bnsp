@@ -61,7 +61,7 @@ class AuthController extends Controller
 
                 if ($user->status_verifikasi === 'rejected') {
                     return back()->withErrors([
-                        'email' => 'Pendaftaran akun Anda telah ditolak oleh Admin.',
+                        'email' => 'Pendaftaran akun Anda telah ditolak oleh Admin silahkan hubungi admin.',
                     ])->onlyInput('email');
                 }
 

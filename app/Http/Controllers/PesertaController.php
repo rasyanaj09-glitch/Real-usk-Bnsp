@@ -82,13 +82,13 @@ class PesertaController extends Controller
         return redirect()->route('peserta.index')->with('success', 'Akun peserta berhasil dibuat oleh Admin.');
     }
 
-    public function show($id)
+    public function show(string $id)
     {
         $peserta = Peserta::with('skema', 'user')->findOrFail($id);
         return view('peserta.show', compact('peserta'));
     }
 
-    public function edit($id)
+    public function edit(string $id)
     {
         $peserta = Peserta::with('user')->findOrFail($id);
         $skemas  = SkemaSertifikasi::all();
@@ -96,7 +96,7 @@ class PesertaController extends Controller
     }
 
     // 2. ADMIN EDIT DATA PESERTA & UPLOAD/UPDATE KTP
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
         $peserta = Peserta::findOrFail($id);
 
@@ -151,7 +151,7 @@ class PesertaController extends Controller
     }
 
     // 3. ADMIN VERIFIKASI (APPROVE) AKUN PESERTA
-    public function verifikasi($id)
+    public function verifikasi(string $id)
     {
         $peserta = Peserta::findOrFail($id);
 
@@ -165,7 +165,7 @@ class PesertaController extends Controller
     }
 
     // 4. ADMIN TOLAK (REJECT) AKUN PESERTA
-    public function tolak($id)
+    public function tolak(string $id)
     {
         $peserta = Peserta::findOrFail($id);
 
@@ -175,11 +175,11 @@ class PesertaController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Pendaftaran peserta ' . $peserta->nama_peserta . ' telah ditolak.');
+        return back()->with('success', 'Pendaftaran peserta ' . $peserta->nama_peserta . ' telah ditolak silahkan hubungi admin.');
     }
 
     // 5. HAPUS PESERTA & BERKAS KTP
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $peserta = Peserta::findOrFail($id);
 

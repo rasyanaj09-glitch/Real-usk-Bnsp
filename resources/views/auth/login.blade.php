@@ -308,6 +308,15 @@
           <form action="{{ route('login') }}" method="POST" autocomplete="off">
                @csrf
 
+               <!-- Alert Berhasil Registrasi -->
+               @if (session('success'))
+               <div class="alert-success" style="background-color: #d1e7dd; color: #0f5132; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.7rem; border: 1px solid #badbcc;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 1.2rem; color: #0f5132;"></i>
+                    <div>{{ session('success') }}</div>
+               </div>
+               @endif
+
+
                <!-- Error -->
                @if ($errors->any())
                <div class="alert-container" role="alert">
